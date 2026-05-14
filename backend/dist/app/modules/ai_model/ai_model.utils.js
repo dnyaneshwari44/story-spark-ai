@@ -19,7 +19,7 @@ const config_1 = __importDefault(require("../../../config"));
 const uuid_1 = require("uuid");
 const genAI = new generative_ai_1.GoogleGenerativeAI(config_1.default.gemini_api_key);
 const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-pro",
+    model: "gemini-2.5-flash",
 });
 const generationConfig = {
     temperature: 1,

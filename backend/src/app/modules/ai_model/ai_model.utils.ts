@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 const genAI = new GoogleGenerativeAI(config.gemini_api_key as string);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-pro",
+  model: "gemini-2.5-flash",
 });
 
 const generationConfig = {
