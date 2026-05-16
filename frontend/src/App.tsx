@@ -1,5 +1,5 @@
+import { JSX, useEffect, useState } from "react";
 import WritingAssistantComponent from "./components/writing-assistant/writing_assistant.component";
-import { JSX } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -48,8 +48,35 @@ const ProtectedRoute = ({
 };
 
 function App() {
+
+
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("theme") === "dark"
+  );
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
+
   return (
     <Router>
+
+      {/* Dark Mode Toggle Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="px-4 py-2 rounded-md bg-black text-white dark:bg-white dark:text-black transition-colors duration-300 shadow-md"
+        >
+          {darkMode ? "☀️ Light" : "🌙 Dark"}
+        </button>
+      </div>
+
       <Routes>
         <Route
           path="/"
@@ -86,6 +113,7 @@ function App() {
 />
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<DashboardComponent />} />
+
           <Route
             path="post-lists"
             element={
@@ -100,6 +128,7 @@ function App() {
               />
             }
           />
+
           <Route
             path="settings"
             element={
@@ -109,6 +138,7 @@ function App() {
               />
             }
           />
+
           <Route
             path="profile"
             element={
@@ -123,6 +153,7 @@ function App() {
               />
             }
           />
+
           <Route path="users">
             <Route
               index
@@ -138,6 +169,7 @@ function App() {
                 />
               }
             />
+
             <Route
               path="list"
               element={
@@ -153,6 +185,7 @@ function App() {
               }
             />
           </Route>
+
           <Route
             path="writers"
             element={
@@ -171,10 +204,12 @@ function App() {
 
         <Route path="/stories" element={<StoriesComponent />} />
         <Route path="/login" element={<LoginComponent />} />
+
         <Route
           path="/auth/email-validation"
           element={<EmailValidationComponent />}
         />
+
         <Route path="/signup" element={<SignUpComponent />} />
         <Route path="/pricing" element={<PricingComponent />} />
         <Route path="/explore" element={<ExploreComponent />} />
@@ -189,8 +224,8 @@ function App() {
         <Route path="/post/:id" element={<PostDetailsComponent />} />
         <Route path="*" element={<NotFoundComponent />} />
       </Routes>
+
     </Router>
   );
 }
-
 export default App;

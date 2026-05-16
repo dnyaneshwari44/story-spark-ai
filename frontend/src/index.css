@@ -1,6 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
-
 @theme {
   --color-custom: #3b82f6;
   
@@ -80,4 +79,9 @@ body {
   background: #4c51556e;
   border-radius: 100px;
   opacity: 1;
+}
+
+html.dark body {
+  background-color: #111827;
+  color: white;
 }

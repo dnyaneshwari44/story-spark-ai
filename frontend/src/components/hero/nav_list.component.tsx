@@ -28,10 +28,10 @@ const NavListComponent: React.FC<INavListComponentProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-16">
           <div className="hidden md:flex items-center space-x-8">
-          <Link to="/">
-             <img src={logo} alt="logo" width={50} height={50} />
-          </Link>
-            <Link to="/" className="text-gray-400 hover:text-custom transition">
+            <a href="/">
+              <img src={logo} alt="logo" width={50} height={50} />
+            </a>
+            <a href="/" className="text-gray-400 hover:text-custom transition">
               HOME
             </Link>
             <Link
