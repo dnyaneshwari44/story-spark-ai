@@ -4,9 +4,8 @@ import NavListComponent from "./nav_list.component";
 
 const HeroSectionComponent = () => {
   return (
-    <div className="gradient-bg min-h-screen">
-      <div className="relative overflow-hidden">
-        <NavListComponent />
+    <div className="gradient-bg min-h-screen flex flex-col">
+      <div className="relative overflow-hidden flex-grow">
         <div className="relative z-10 mx-auto max-w-7xl px-6 pt-14 pb-24 text-center">
           <div className="inline-flex items-center justify-center mx-auto px-4 py-1.5 mb-8 rounded-full bg-opacity-10 border border-white/20 opacity-80 bg-blue-500/20 text-white">
             <span className="text-sm font-medium">

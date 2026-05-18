@@ -201,17 +201,17 @@ function App() {
           />
         </Route>
 
-        <Route path="/stories" element={<StoriesComponent />} />
-        <Route path="/login" element={<LoginComponent />} />
+        <Route path="/stories" element={<RootLayout><StoriesComponent /></RootLayout>} />
+        <Route path="/login" element={<RootLayout><LoginComponent /></RootLayout>} />
 
         <Route
           path="/auth/email-validation"
           element={<EmailValidationComponent />}
         />
 
-        <Route path="/signup" element={<SignUpComponent />} />
-        <Route path="/pricing" element={<PricingComponent />} />
-        <Route path="/explore" element={<ExploreComponent />} />
+        <Route path="/signup" element={<RootLayout><SignUpComponent /></RootLayout>} />
+        <Route path="/pricing" element={<RootLayout><PricingComponent /></RootLayout>} />
+        <Route path="/explore" element={<RootLayout><ExploreComponent /></RootLayout>} />
         <Route
           path="/bookmarks"
           element={
@@ -239,15 +239,15 @@ function App() {
           }
         />
 
-        <Route path="/post/:id" element={<PostDetailsComponent />} />
-        <Route path="/about-us" element={<AboutUsComponent />} />
-        <Route path="/career" element={<CareerComponent />} />
-        <Route path="/contact-us" element={<ContactUsComponent />} />
-        <Route path="/blog" element={<BlogComponent />} />
-        <Route path="/help-center" element={<HelpCenterComponent />} />
-        <Route path="/guidelines" element={<GuidelinesComponent />} />
-        <Route path="/community" element={<CommunityComponent />} />
-        <Route path="*" element={<NotFoundComponent />} />
+        <Route path="/post/:id" element={<RootLayout><PostDetailsComponent /></RootLayout>} />
+        <Route path="/about-us" element={<RootLayout><AboutUsComponent /></RootLayout>} />
+        <Route path="/career" element={<RootLayout><CareerComponent /></RootLayout>} />
+        <Route path="/contact-us" element={<RootLayout><ContactUsComponent /></RootLayout>} />
+        <Route path="/blog" element={<RootLayout><BlogComponent /></RootLayout>} />
+        <Route path="/help-center" element={<RootLayout><HelpCenterComponent /></RootLayout>} />
+        <Route path="/guidelines" element={<RootLayout><GuidelinesComponent /></RootLayout>} />
+        <Route path="/community" element={<RootLayout><CommunityComponent /></RootLayout>} />
+        <Route path="*" element={<RootLayout><NotFoundComponent /></RootLayout>} />
       </Routes>
 
     </Router>

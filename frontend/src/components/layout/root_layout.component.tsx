@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-// import TopHeaderComponent from "../top_header/top_header.component";
+import NavListComponent from "../hero/nav_list.component";
 import FooterComponent from "../footer/footer.component";
 
 interface RootLayoutProps {
@@ -8,11 +8,11 @@ interface RootLayoutProps {
 
 const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
-    <>
-      {/* <TopHeaderComponent /> */}
-      <div className="min-h-screen">{children}</div>
+    <div className="flex flex-col min-h-screen">
+      <NavListComponent />
+      <div className="flex-grow">{children}</div>
       <FooterComponent />
-    </>
+    </div>
   );
 };
 
