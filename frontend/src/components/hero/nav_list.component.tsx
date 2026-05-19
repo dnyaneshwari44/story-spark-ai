@@ -55,7 +55,7 @@ const NavListComponent: React.FC = () => {
         <div className="flex items-center justify-between">
         <div className="flex items-center space-x-8">
           <Link to="/">
-            <img src={logo} alt="logo" width={50} height={50} />
+            <img src={logo} alt="logo" className="h-10 w-auto object-contain" />
           </Link>
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-gray-400 hover:text-custom transition">HOME</Link>
