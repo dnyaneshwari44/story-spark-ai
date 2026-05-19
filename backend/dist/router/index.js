@@ -13,6 +13,9 @@ const post_router_1 = require("../app/modules/post/post.router");
 const notification_router_1 = require("../app/modules/notification/notification.router");
 const comment_router_1 = require("../app/modules/comment/comment.router");
 const analysis_router_1 = require("../app/modules/analysis/analysis.router");
+const review_router_1 = require("../app/modules/review/review.router");
+const reaction_router_1 = require("../app/modules/reaction/reaction.router");
+const bookmark_router_1 = require("../app/modules/bookmark/bookmark.router");
 const router = express_1.default.Router();
 const modules = [
     {
@@ -22,6 +25,10 @@ const modules = [
     {
         path: "/user",
         router: user_router_1.UserRouter,
+    },
+    {
+        path: "/review",
+        router: review_router_1.ReviewRouter,
     },
     {
         path: "/ai_model",
@@ -36,7 +43,7 @@ const modules = [
         router: post_router_1.PostRouter,
     },
     {
-        path: "/notification",
+        path: "/notifications",
         router: notification_router_1.NotificationRouter,
     },
     {
@@ -46,6 +53,14 @@ const modules = [
     {
         path: "/analysis",
         router: analysis_router_1.AnalysisRouter,
+    },
+    {
+        path: "/reaction",
+        router: reaction_router_1.ReactionRouter,
+    },
+    {
+        path: "/bookmarks",
+        router: bookmark_router_1.BookmarkRouter,
     },
 ];
 modules.forEach((route) => router.use(route.path, route.router));

@@ -20,10 +20,10 @@ const LatestPostsComponent = () => {
               className="bg-blue-500/10 rounded-lg shadow-sm p-6"
             >
               <div className="flex items-center mb-4">
-                <SSProfile name={post.author.name} size="h-8 w-8" />
+                <SSProfile name={post.author?.name || 'Unknown User'} size="h-8 w-8" />
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-400">
-                    {post.author.name}
+                    {post.author?.name || 'Unknown User'}
                   </p>
                   <p className="text-xs text-gray-500">
                     {formatDateShort(post.createdAt)}
@@ -45,7 +45,7 @@ const LatestPostsComponent = () => {
                     <i className="far fa-comment mr-1"></i> {post.commentsCount}
                   </span>
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex flex-wrap gap-2">
                   {post.topic.map((topic) => (
                     <span
                       key={topic._id}
