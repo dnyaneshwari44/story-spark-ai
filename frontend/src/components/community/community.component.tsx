@@ -41,7 +41,7 @@ const CommunityComponent: React.FC = () => {
                 JOIN DISCORD
               </button>
             </a>
-            <Link to="/community#guidelines" className="w-full sm:w-auto">
+            <Link to="/guidelines" className="w-full sm:w-auto">
               <button className="w-full !rounded-button bg-transparent border border-white/20 hover:bg-white/5 text-white px-10 py-4 font-bold transition-all cursor-pointer">
                 VIEW GUIDELINES
               </button>
