@@ -60,6 +60,21 @@ export const UserSchema: Schema<IUser> = new Schema<IUser, UserModel>(
       lastActiveDate: { type: Date, default: null },
       badges: [{ type: String }],
     },
+    readingPreferences: {
+      favoriteGenres: [
+        {
+          name: { type: String },
+          count: { type: Number, default: 0 },
+        },
+      ],
+      favoriteEmotions: [
+        {
+          name: { type: String },
+          count: { type: Number, default: 0 },
+        },
+      ],
+    },
+    readingHistory: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   },
   {
     timestamps: true,

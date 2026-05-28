@@ -32,6 +32,11 @@ export interface IUser {
     lastActiveDate: Date | null;
     badges: string[];
   };
+  readingPreferences?: {
+    favoriteGenres: { name: string; count: number }[];
+    favoriteEmotions: { name: string; count: number }[];
+  };
+  readingHistory?: Types.ObjectId[];
 }
 
 export type UserModel = Model<IUser, object>;

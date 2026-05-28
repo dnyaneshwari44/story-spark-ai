@@ -141,7 +141,7 @@ const getLatestPosts = async () => {
   try {
     const res = await Post.find({ isDeleted: { $ne: true } })
       .sort({ createdAt: -1 })
-      .limit(2)
+      .limit(50)
       .populate("author", "name email createdAt")
       .populate({
         path: "reactions",
@@ -164,7 +164,7 @@ const getFeaturedPosts = async () => {
       isDeleted: { $ne: true },
     })
       .sort({ createdAt: -1, updatedBy: -1 })
-      .limit(2)
+      .limit(10)
       .populate("author", "name email createdAt")
       .populate({
         path: "reactions",
