@@ -46,7 +46,7 @@ const FooterComponent = () => {
     { label: "About Us", to: "/about-us" },
     { label: "Careers",  to: "/career"   },
     { label: "Contact",  to: "/contact-us"},
-    { label: "Terms",    to: "/terms"    },
+    { label: "Terms", to: "/terms" },
   ];
 
   const githubIssuesUrl =
