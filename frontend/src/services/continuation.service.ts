@@ -1,4 +1,5 @@
-import axios from "axios";
+import { instance as apiClient } from "../helpers/axios/axionInstance";
+import { getBaseUrl } from "../helpers/config";
 import { Chapter } from "../types/story.types";
 
 export const continueStory = async (
@@ -8,23 +9,23 @@ export const continueStory = async (
     .map((chapter) => chapter.content)
     .join("\n\n");
 
-  const response = await axios.post(
-    "http://localhost:5000/api/v1/story-continuation/continue",
+  const response = await apiClient.post(
+    `${getBaseUrl()}/story-continuation/continue`,
     {
-      prompt: `
+      prompt: `                                                 
 Continue this story naturally.
 
 Rules:
-- Maintain character consistency
+- Maintain character consistency                            
 - Keep emotional tone
 - Avoid repetition
 - Continue the narrative smoothly
 
 Story:
 ${previousContent}
-      `,
+      `,                
     }
   );
 
   return response.data.text;
-};
+};                                                              
