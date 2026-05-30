@@ -4,6 +4,10 @@ import { AiModelService } from "../app/modules/ai_model/ai_model.service";
 import config from "../config";
 import { JwtHalers } from "../utils/jwt.helper";
 import type { Secret } from "jsonwebtoken";
+import { User } from "../app/modules/user/user.model";
+import { reserveUserQuota } from "../app/modules/ai_model/quota.service";
+import { createUserQuotaGuard, runWithQuotaCleanup } from "../app/modules/ai_model/quota.lifecycle";
+
 
 const COLORS = [
   "#FF6B6B",
@@ -41,6 +45,7 @@ interface IRoom {
 }
 
 const rooms = new Map<string, IRoom>();
+const cleanupTimeouts = new Map<string, NodeJS.Timeout>();
 
 function generateRoomId(): string {
   return Math.random().toString(36).substring(2, 10);
@@ -106,6 +111,12 @@ export const setupCollabSocket = (io: Server) => {
 
     // Join an existing room
     socket.on("collab:join_room", ({ roomId }) => {
+      const pendingCleanup = cleanupTimeouts.get(roomId);
+      if (pendingCleanup) {
+        clearTimeout(pendingCleanup);
+        cleanupTimeouts.delete(roomId);
+      }
+
       const userId = socket.data.userId;
       const username = socket.data.username;
       const room = rooms.get(roomId);
@@ -164,66 +175,98 @@ export const setupCollabSocket = (io: Server) => {
     });
 
     // AI continues the story
-    socket.on("collab:ai_continue", async ({ roomId }) => {
-      const userId = socket.data.userId;
-      const room = rooms.get(roomId);
+socket.on("collab:ai_continue", async ({ roomId }) => {
+  const room = rooms.get(roomId);
 
-      if (!room) return;
+  if (!room) return;
 
-      const participant = room.participants.find((p) => p.userId === userId);
+  const userId = socket.data.userId;
+  if (!userId) {
+    socket.emit("collab:error", { message: "Unauthorized" });
+    return;
+  }
 
-      if (!participant) {
-        socket.emit("collab:error", {
-          message: "You are not a participant of this room",
-        });
-        return;
-      }
+  const participant = room.participants.find((p) => p.userId === userId);
+  if (!participant) {
+    socket.emit("collab:error", {
+      message: "You are not a participant of this room",
+    });
+    return;
+  }
 
+  const user = await User.findById(userId);
+  if (!user) {
+    socket.emit("collab:error", { message: "User not found!" });
+    return;
+  }
+
+  try {
+    await reserveUserQuota(user.email);
+  } catch (error: any) {
+    const errorMsg =
+      error instanceof Error
+        ? error.message
+        : "Monthly request limit exceeded!";
+    socket.emit("collab:error", { message: errorMsg });
+    return;
+  }
+
+  const guard = createUserQuotaGuard(user.email);
+
+  try {
+    await runWithQuotaCleanup(guard, async () => {
       collabNamespace.to(roomId).emit("collab:ai_thinking", { roomId });
 
-      try {
-        const storyContext = room.story
-          .map((chunk) => chunk.text)
-          .filter(Boolean)
-          .join(" ");
+      const storyContext = room.story
+        .map((chunk) => chunk.text)
+        .filter(Boolean)
+        .join("\n");
 
-        const prompt = storyContext
-          ? `Continue this collaborative story naturally and creatively in 2-3 sentences:\n\n${storyContext}`
-          : "Start a collaborative story naturally and creatively in 2-3 sentences.";
+      const prompt = storyContext
+        ? `Continue the following story naturally and creatively in 2-3 sentences based on the context. Return ONLY the continuation text, do not add any quotes, titles, JSON, formatting, or labels:\n\nStory Context:\n${storyContext}\n\nContinuation:`
+        : "Start a collaborative story naturally and creatively in 2-3 sentences. Return ONLY the story text, do not add any quotes, titles, JSON, formatting, or labels.";
 
-        const result = await AiModelService.aiFreeModelGenerate({
-          prompt,
-          wordLength: 120,
-          numStories: 1,
-          language: "English",
-        });
+      const result = await AiModelService.aiFreeModelGenerate({
+        prompt,
+        wordLength: 120,
+        numStories: 1,
+        language: "English",
+      });
 
-        const continuationText =
-          result?.[0]?.content?.trim() || "The story continues...";
+      const continuationText = result?.[0]?.content?.trim();
 
-        const aiChunk: IStoryChunk = {
-          authorId: "ai",
-          authorName: "✨ AI",
-          color: "#d4af37",
-          text: continuationText,
-          isAI: true,
-          timestamp: new Date(),
-        };
-
-        room.story.push(aiChunk);
-
-        collabNamespace.to(roomId).emit("collab:story_updated", {
-          story: room.story,
-          newChunk: aiChunk,
-        });
-      } catch (error) {
-        logger.error("AI collaboration generation failed", error);
-
-        collabNamespace.to(roomId).emit("collab:error", {
-          message: "AI continuation failed. Please try again.",
-        });
+      if (!continuationText) {
+        throw new Error("Empty response from AI");
       }
+
+      const aiChunk: IStoryChunk = {
+        authorId: "ai",
+        authorName: "✨ AI",
+        color: "#d4af37",
+        text: continuationText,
+        isAI: true,
+        timestamp: new Date(),
+      };
+
+      room.story.push(aiChunk);
+
+      collabNamespace.to(roomId).emit("collab:story_updated", {
+        story: room.story,
+        newChunk: aiChunk,
+      });
     });
+  } catch (error) {
+    logger.error("AI collaboration generation failed", error);
+
+    socket.emit("collab:error", {
+      message: "AI continuation failed. Please try again.",
+    });
+  } finally {
+    collabNamespace.to(roomId).emit("collab:user_stop_typing", {
+      userId: "ai",
+    });
+  }
+});
 
     // Typing indicator
     socket.on("collab:typing", ({ roomId }) => {
@@ -245,6 +288,12 @@ export const setupCollabSocket = (io: Server) => {
 
     // Get room info
     socket.on("collab:get_room", ({ roomId }) => {
+      const pendingCleanup = cleanupTimeouts.get(roomId);
+      if (pendingCleanup) {
+        clearTimeout(pendingCleanup);
+        cleanupTimeouts.delete(roomId);
+      }
+
       const userId = socket.data.userId;
       const room = rooms.get(roomId);
       if (!room) {
@@ -267,7 +316,17 @@ export const setupCollabSocket = (io: Server) => {
           (p) => p.socketId !== socket.id,
         );
         if (room.participants.length === 0) {
-          rooms.delete(room.roomId);
+          // Clear any existing cleanup timeout to prevent duplicate timer runs
+          const existingTimeout = cleanupTimeouts.get(room.roomId);
+          if (existingTimeout) clearTimeout(existingTimeout);
+
+          // Schedule permanent room eviction in 5 minutes (grace period)
+          const timeout = setTimeout(() => {
+            rooms.delete(room.roomId);
+            cleanupTimeouts.delete(room.roomId);
+          }, 5 * 60 * 1000);
+
+          cleanupTimeouts.set(room.roomId, timeout);
         } else {
           collabNamespace.to(room.roomId).emit("collab:room_updated", { room });
         }
