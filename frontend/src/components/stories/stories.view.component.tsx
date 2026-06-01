@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+﻿import React, { useEffect, useState, useRef, useMemo } from "react";
 import { getShortenedText, ITopicData, topicsData, getWordCount, SELECTED_TOPIC_CLASSES } from "./stories.utils";
 import toast, { Toaster } from "react-hot-toast";
 import { useCreatePostMutation, useDeletePostMutation } from "../../redux/apis/post.api";
 import { useGetProfileInfoQuery } from "../../redux/apis/user.api";
 import jsPDF from "jspdf";
 import StoryWorldMap from "../story-map/StoryWorldMap";
+import StoryRemix from "../remix/StoryRemix";
 import BookmarkButton from "../BookmarkButton";
 import logo from "../../assets/logoNew.png";
 import StoryGeneratingAnimation from "../loading/story-generating-animation.component";
@@ -190,6 +191,77 @@ const StoriesViewComponent: React.FC<StoriesComponentProps> = ({
     );
     toast.success("Reverted to original story ending!");
   };
+
+  const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
+  const [isPausedAudio, setIsPausedAudio] = useState<boolean>(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleTextToSpeech = () => {
+    if (!selectedStory?.content) return;
+
+    if (!("speechSynthesis" in window)) {
+      toast.error("Text-to-speech is not supported in this browser.");
+      return;
+    }
+
+    if (isPlayingAudio) {
+      if (isPausedAudio) {
+        window.speechSynthesis.resume();
+        setIsPausedAudio(false);
+        toast.success("Resumed reading story");
+      } else {
+        window.speechSynthesis.pause();
+        setIsPausedAudio(true);
+        toast.success("Paused reading story");
+      }
+    } else {
+      window.speechSynthesis.cancel();
+      const cleanContent = selectedStory.content.replace(/<[^>]*>/g, "");
+      const utterance = new SpeechSynthesisUtterance(cleanContent);
+      
+      utterance.onend = () => {
+        setIsPlayingAudio(false);
+        setIsPausedAudio(false);
+      };
+
+      utterance.onerror = (e) => {
+        console.error("SpeechSynthesis error:", e);
+        setIsPlayingAudio(false);
+        setIsPausedAudio(false);
+      };
+
+      const voices = window.speechSynthesis.getVoices();
+      const englishVoice = voices.find(
+        (v) => v.lang.startsWith("en-") && v.name.includes("Google")
+      ) || voices.find((v) => v.lang.startsWith("en-"));
+      if (englishVoice) {
+        utterance.voice = englishVoice;
+      }
+
+      window.speechSynthesis.speak(utterance);
+      setIsPlayingAudio(true);
+      setIsPausedAudio(false);
+      toast.success("Playing story audio");
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleStopAudio = () => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsPlayingAudio(false);
+    setIsPausedAudio(false);
+    toast.success("Stopped audio playback");
+  };
+
+  useEffect(() => {
+    return () => {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     setSelectTopics(topics.filter((topic) => topic.selected));
@@ -656,6 +728,13 @@ ${content}
   const isNarrationActive = narrationState !== "idle";
 
 
+if (isLoading) {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <StoryGeneratingAnimation />
+    </div>
+  );
+}
   if (!selectedStory) {
     return null;
   }
@@ -682,11 +761,16 @@ ${content}
               </h1>
               <div className="flex flex-wrap gap-2">
                 <span className="inline-flex items-center rounded-full bg-purple-900/60 text-purple-300 border border-purple-700/50 py-1 px-3 text-xs font-semibold">
-                  🎭 {selectedStory.tag}
+                  ≡ƒÄ¡ {selectedStory.tag}
                 </span>
                 <span className="inline-flex items-center rounded-full bg-blue-900/60 text-blue-300 border border-blue-700/50 py-1 px-3 text-xs font-semibold">
-                  🌐 {selectedStory.language || "English"}
+                  ≡ƒîÉ {selectedStory.language || "English"}
                 </span>
+                {selectedStory.emotions && selectedStory.emotions.length > 0 && (
+                  <span className="inline-flex items-center rounded-full bg-emerald-900/60 text-emerald-300 border border-emerald-700/50 py-1 px-3 text-xs font-semibold">
+                    ≡ƒÿè {selectedStory.emotions.join(", ")}
+                  </span>
+                )}
               </div>
             </div>
             <div className="flex justify-start sm:justify-end">
@@ -702,7 +786,7 @@ ${content}
                       } hover:scale-110 transition-transform duration-200 focus:outline-none`}
                       onClick={() => handelStorySelection(story)}
                     >
-                      <ImageFallback
+                      <img
                         src={story.imageURL}
                         alt={story.title}
                         className="w-full h-full object-cover rounded-full"
@@ -753,7 +837,15 @@ ${content}
                   onClick={() => setShowWorldMap(true)}
                   disabled={!selectedStory}
                 >
-                  🗺️ World Map
+                  ≡ƒù║∩╕Å World Map
+                </button>
+                <button
+                  type="button"
+                  className="rounded-lg px-4 py-2 bg-fuchsia-700 text-slate-200 font-semibold cursor-pointer hover:bg-fuchsia-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => setShowRemix(true)}
+                  disabled={!selectedStory}
+                >
+                  ≡ƒöÇ Remix
                 </button>
                 <button
                   type="button"
@@ -768,6 +860,18 @@ ${content}
                 </button>
               </div>
             </div>
+
+            {selectedStory.enhancedPrompt && (
+              <div className="mb-6 p-4 bg-indigo-900/30 border border-indigo-700/50 rounded-xl relative z-10">
+                <h4 className="text-sm font-semibold text-indigo-300 mb-2 flex items-center gap-2">
+                  <i className="fas fa-wand-magic-sparkles"></i> AI Enhanced Prompt
+                </h4>
+                <p className="text-slate-300 text-sm italic break-words whitespace-pre-wrap">
+                  {selectedStory.enhancedPrompt}
+                </p>
+              </div>
+            )}
+
             <div id="story-content" className="prose prose-invert max-w-none text-slate-300 leading-relaxed tracking-wide relative z-10">
               <p className="break-words whitespace-pre-wrap">
                 {sentenceSegments.length > 0 ? (
@@ -1033,10 +1137,10 @@ ${content}
                       {selectedStory.tag.toUpperCase()}
                     </div>
                     <div className="inline-flex items-center rounded-full bg-indigo-600 py-1 px-3 text-xs font-semibold text-white shadow-sm">
-                      🌐 {(selectedStory.language || "English").toUpperCase()}
+                      ≡ƒîÉ {(selectedStory.language || "English").toUpperCase()}
                     </div>
                     <div className="inline-flex items-center rounded-full bg-slate-700 py-1 px-2.5 text-xs font-medium text-slate-300 shadow-sm gap-1">
-                      ⏱️ {calculateReadingTime(selectedStory.content)} min read
+                      ΓÅ▒∩╕Å {calculateReadingTime(selectedStory.content)} min read
                     </div>
                   </div>
                   <div>

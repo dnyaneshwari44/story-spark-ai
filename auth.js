@@ -10,6 +10,18 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 let isSubmitting = false;
 
+/**
+ * Close the login/signup page and return the user to their previous location.
+ * Falls back to the home page ('/') if there is no browser history to go back to.
+ */
+function handleClose() {
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = '/';
+    }
+}
+
 /* ── DOM Init & Global Handler Registrations ── */
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Detect initial auth page mode based on filename

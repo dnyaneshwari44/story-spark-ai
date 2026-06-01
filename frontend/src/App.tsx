@@ -16,9 +16,6 @@ import BranchingStory from "./components/stories/BranchingStory";
 import CareerComponent from "./components/footer/career.tsx";
 import CollabHome from "./components/collab/CollabHome";
 import CollabRoom from "./components/collab/CollabRoom";
-import StoriesComponent from "./components/stories/stories.component";
-import PublishedStoriesComponent from "./components/dashboard/posts/published_stories.component";
-import ScrollToTopButton from "./components/ScrollToTopButton";
 import CommunityComponent from "./components/community/community.component";
 import Contact from "./components/contactus/contactus";
 import ContributorsComponent from "./components/footer/contributors";
@@ -77,6 +74,7 @@ const ProtectedRoute = ({ allowedRoles, element }: ProtectedRouteProps) => {
 };
 
 const ALL_ROLES = [USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.WRITER, USER_ROLE.USER];
+const ELEVATED_ADMIN_ROLES = [USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN];
 
 const router = createBrowserRouter([
   {
@@ -157,9 +155,14 @@ const router = createBrowserRouter([
 
   // Isolated layout branches
   { path: "/auth/email-validation", element: <EmailValidationComponent /> },
-  { path: "/payment", element: <PaymentComponent /> },
-  { path: "/collab", element: <CollabHome /> },
-  { path: "/collab/:roomId", element: <CollabRoom /> },
+  {
+    element: <ProtectedRoute allowedRoles={ALL_ROLES} />,
+    children: [
+      { path: "/payment", element: <PaymentComponent /> },
+      { path: "/collab", element: <CollabHome /> },
+      { path: "/collab/:roomId", element: <CollabRoom /> },
+    ],
+  },
 
   // Dashboard
   {
