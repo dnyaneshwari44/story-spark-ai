@@ -652,7 +652,7 @@ useEffect(() => {
       timeoutId = setTimeout(() => {
         if (isGenerationInProgressRef.current) {
           toast.error("Story generation timed out. Please try again.");
-          handleCancelGeneration();
+          handleCancelGeneration(true);
         }
       }, 60000);
 
@@ -705,12 +705,14 @@ useEffect(() => {
     }
   };
 
-  const handleCancelGeneration = () => {
+  const handleCancelGeneration = (isTimeout = false) => {
     activeGenerationRef.current?.abort();
     activeGenerationRef.current = null;
     isGenerationInProgressRef.current = false;
     setLoading(false);
-    toast("Story generation cancelled.");
+    if (!isTimeout) {
+      toast("Story generation cancelled.");
+    }
   };
 
   const handleClearPrompt = () => {
