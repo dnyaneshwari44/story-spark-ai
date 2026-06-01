@@ -102,4 +102,31 @@ export const paymentRateLimiter = createRateLimiter({
   actionLabel: "payment",
 });
 
+/** Bug report submit: 10 per hour, 1-hour block */
+export const bugReportRateLimiter = createRateLimiter({
+  windowMs: 60 * 60 * 1000,  // 1 hour
+  maxRequests: 10,
+  blockTimeMs: 60 * 60 * 1000, // 1 hour
+  keyPrefix: "bug_report",
+  actionLabel: "bug report",
+});
+
+/** Contact form (sends email): 5 per hour, 1-hour block */
+export const contactRateLimiter = createRateLimiter({
+  windowMs: 60 * 60 * 1000,  // 1 hour
+  maxRequests: 5,
+  blockTimeMs: 60 * 60 * 1000, // 1 hour
+  keyPrefix: "contact",
+  actionLabel: "contact",
+});
+
+/** Newsletter subscribe (sends email): 5 per hour, 1-hour block */
+export const newsletterRateLimiter = createRateLimiter({
+  windowMs: 60 * 60 * 1000,  // 1 hour
+  maxRequests: 5,
+  blockTimeMs: 60 * 60 * 1000, // 1 hour
+  keyPrefix: "newsletter",
+  actionLabel: "newsletter subscription",
+});
+
 export default ipRateLimiter;
