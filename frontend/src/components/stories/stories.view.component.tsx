@@ -1395,6 +1395,31 @@ if (isLoading) {
           onClose={() => setShowWorldMap(false)}
         />
       )}
+
+      {showRemix && selectedStory && (
+        <StoryRemixModal
+          story={selectedStory.content}
+          title={selectedStory.title}
+          selectedStory={selectedStory}
+          onClose={() => setShowRemix(false)}
+          onApplyRemix={(content: string) => {
+            const updatedStory = { ...selectedStory, content };
+            setSelectedStory(updatedStory);
+            setStories(stories.map((story) => (story.uuid === selectedStory.uuid ? updatedStory : story)));
+            setShowRemix(false);
+          }}
+        />
+      )}
+
+      {showStoryVisualizer && storyboardScenes.length > 0 && (
+        <StoryVisualizer
+          title={selectedStory.title}
+          scenes={storyboardScenes}
+          styleGuide={storyboardStyleGuide}
+          onClose={() => setShowStoryVisualizer(false)}
+        />
+      )}
+
       <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
