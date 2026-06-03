@@ -361,8 +361,7 @@ const SignUpComponent = () => {
                         className={`${met ? "text-green-400" : "text-red-400"} truncate`}
                         aria-label={`${label}: ${met ? "met" : "not met"}`}
                       >
-                        <span aria-hidden="true">{met ? "Γ£à" : "Γ¥î"}</span>{" "}
-                        {label}
+                      <span aria-hidden="true">{met ? "✅" : "❌"}</span>                        {label}
                       </li>
                     );
                   })}
