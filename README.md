@@ -27,6 +27,7 @@
 - [Features 💪](#features-)
 - [Local development (monorepo)](#local-development-monorepo)
 - [Environment variables](#environment-variables)
+- [Troubleshooting 🛠️](#troubleshooting-️)
 - [Contributing 👨‍💻](#contributing-)
 - [Contributors 🤝](#contributors-)
 - [Maintainers](#maintainers)
@@ -175,6 +176,76 @@ cp frontend/.env.example frontend/.env
 
 
 <a id="contributing"></a>
+## Troubleshooting 🛠️
+
+Running into issues during setup? Here are the most common errors and how to fix them.
+
+---
+
+### 1. `npm error Override for @types/express conflicts with direct dependency`
+
+**Cause:** There's a version mismatch in the root `package.json` — `@types/express` is set to `^5.0.6` in `devDependencies`, which conflicts with what the project expects.
+
+**Fix:** Open your root `package.json` and change the `@types/express` version under `devDependencies`:
+
+```json
+// ❌ Before
+"@types/express": "^5.0.6"
+
+// ✅ After
+"@types/express": "^4.17.21"
+```
+
+Then re-run:
+```bash
+npm install
+```
+
+---
+
+### 2. `docker: The term 'docker' is not recognized`
+
+**Cause:** Docker Desktop is not installed or not added to your system PATH.
+
+**Fix:** Download and install Docker Desktop from the official site:
+👉 https://www.docker.com/products/docker-desktop/
+
+After installation, restart your terminal and verify with:
+```bash
+docker --version
+```
+
+---
+
+### 3. `WSL needs updating` error in Docker Desktop
+
+**Cause:** Your Windows Subsystem for Linux (WSL) version is outdated and incompatible with the current Docker Desktop.
+
+**Fix:** Run the following command in your terminal (as Administrator if needed):
+```bash
+wsl --update
+```
+Once the update completes, click **Try Again** in Docker Desktop. If the issue persists, restart your machine.
+
+---
+
+### 4. `npm ci` fails inside Docker with missing or out-of-sync `package-lock.json`
+
+**Cause:** The `package-lock.json` is either missing or out of sync with `package.json`, causing `npm ci` to fail.
+
+**Fix:** At the **repo root**, regenerate the lockfile:
+```bash
+npm install
+```
+Then commit the updated `package-lock.json` before rebuilding your Docker image:
+```bash
+git add package-lock.json
+git commit -m "chore: regenerate package-lock.json"
+```
+
+---
+
+> > 💡 **Still stuck?** Open an issue or check existing ones — your problem may already have a solution!
 
 ## Contributing 👨‍💻
 
