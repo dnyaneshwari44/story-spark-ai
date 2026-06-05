@@ -125,13 +125,14 @@ const strengthWidth =
           setShowOtpField(true);
         }
       } catch (error) {
-        const message =
-          (error as { data?: Array<{ message?: string }> })?.data?.[0]
-            ?.message ||
-          "Failed to send OTP. Check backend .env email credentials.";
-        toast.error(message);
-        console.log("error: ", error);
-      } finally {
+  const err = error as { data?: Array<{ message?: string }>; message?: string };
+  const message =
+    err?.data?.[0]?.message ||
+    err?.message ||
+    "Something went wrong. Please try again.";
+  toast.error(message);
+  console.log("error: ", error);
+} finally {
         setIsBusy(false);
       }
     }
@@ -172,11 +173,13 @@ const strengthWidth =
       } else {
         throw new Error("No verification token received");
       }
-    } catch (err: unknown) {
-      const message =
-        (err as { data?: Array<{ message?: string }> })?.data?.[0]?.message ||
-        "OTP verification failed. Please check the code and try again.";
-      toast.error(message);
+} catch (err: unknown) {
+  const e = err as { data?: Array<{ message?: string }>; message?: string };
+  const message =
+    e?.data?.[0]?.message ||
+    e?.message ||
+    "OTP verification failed. Please check the code and try again.";
+  toast.error(message);
       console.log("error: ", err);
     } finally {
       setIsBusy(false);
