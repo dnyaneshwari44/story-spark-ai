@@ -486,7 +486,11 @@ const deletePost = async (postId: string, token: ITokenPayload) => {
     throw new ApiError(httpStatus.NOT_FOUND, "Post not found!");
   }
 
-  if (!post.author || post.author.toString() !== user._id.toString()) {
+  if (
+    post.author.toString() !== user._id.toString() &&
+    user.role !== "admin" &&
+    user.role !== "super_admin"
+  ) {
     throw new ApiError(
       httpStatus.FORBIDDEN,
       "You can only delete your own story!"
