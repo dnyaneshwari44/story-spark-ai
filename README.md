@@ -381,3 +381,7 @@ Don't forget to leave a star ⭐
 ### Proposed Feature: Trending Topics & UI Enhancements
 - Added responsive writing genres (Fantasy, Mystery, Romance) next to recommended writers.
 - Implemented a clean 'How It Works' section to polish the landing page layout.
+
+### Proposed Feature: Trending Topics & UI Enhancements
+- Added responsive writing genres (Fantasy, Mystery, Romance) next to recommended writers.
+- Implemented a clean 'How It Works' section to polish the landing page layout.
