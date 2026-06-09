@@ -74,36 +74,86 @@ def normal_sessions(n: int = 1000) -> np.ndarray:
         sessions.append(session)
     return np.array(sessions, dtype=np.float32)
 
-
 def stuck_sessions(n: int = 200) -> np.ndarray:
     """
-    Writer's block — short prompts, rapid retries, many regenerations.
+    Generate writer's block sessions with varying severity levels.
+
+    Real users do not always exhibit extreme writer's block behaviour.
+    Some users experience mild difficulty, while others may be
+    moderately or severely stuck. Simulating multiple severity levels
+    produces more realistic training and evaluation data.
+
     Feature order is IDENTICAL to normal_sessions.
-
-    BUG FIX 1: Removed the extra nested list that was creating shape
-               (n, SEQ_LEN, 1, 8) instead of (n, SEQ_LEN, 8).
-    BUG FIX 2: Feature values are now clearly separated from normal ranges
-               so the autoencoder can actually learn the difference.
-    BUG FIX 3: Feature order now matches normal_sessions column-for-column.
     """
-    sessions = []
-    for _ in range(n):
-        session = [
-            [
-                np.random.randint(1,   20),    # 0: tiny prompts 
-                np.random.randint(1,   8),     # 1: instant retries 
-                np.random.randint(15,  40),    # 2: massive regenerations 
-                np.random.randint(1,   5),     # 3: quits quickly 
-                np.random.randint(60,  100),   # 4: huge backspace ratio 
-                np.random.randint(30,  90),    # 5: long pauses 
-                np.random.randint(1,   4),     # 6: terrible confidence 
-                np.random.randint(5,   15),    # 7: many blocked words 
-            ]
-            for _ in range(SEQ_LEN)
-        ]
-        sessions.append(session)
-    return np.array(sessions, dtype=np.float32)
 
+    sessions = []
+
+    for _ in range(n):
+
+        # Simulate different levels of writer's block instead of
+        # treating all blocked users as a single extreme category.
+        severity = np.random.choice(
+            ["mild", "moderate", "severe"],
+            p=[0.4, 0.4, 0.2]
+        )
+
+        if severity == "mild":
+
+            # User is struggling slightly but can still make progress.
+            # Behaviour overlaps somewhat with normal users.
+            session = [
+                [
+                    np.random.randint(80, 180),
+                    np.random.randint(20, 80),
+                    np.random.randint(2, 8),
+                    np.random.randint(10, 35),
+                    np.random.randint(10, 40),
+                    np.random.randint(5, 20),
+                    np.random.randint(5, 8),
+                    np.random.randint(1, 4),
+                ]
+                for _ in range(SEQ_LEN)
+            ]
+
+        elif severity == "moderate":
+
+            # User shows noticeable signs of writer's block such as
+            # increased retries, lower confidence, and more hesitation.
+            session = [
+                [
+                    np.random.randint(40, 120),
+                    np.random.randint(10, 60),
+                    np.random.randint(5, 15),
+                    np.random.randint(5, 25),
+                    np.random.randint(20, 60),
+                    np.random.randint(10, 40),
+                    np.random.randint(3, 6),
+                    np.random.randint(2, 8),
+                ]
+                for _ in range(SEQ_LEN)
+            ]
+
+        else:
+
+            # Severe writer's block with behaviour close to the
+            # original synthetic anomaly distribution.
+            session = [
+                [
+                    np.random.randint(1, 40),
+                    np.random.randint(1, 20),
+                    np.random.randint(10, 30),
+                    np.random.randint(1, 10),
+                    np.random.randint(50, 100),
+                    np.random.randint(20, 90),
+                    np.random.randint(1, 3),
+                    np.random.randint(5, 15),
+                ]
+                for _ in range(SEQ_LEN)
+            ]
+
+        sessions.append(session)
+
+    return np.array(sessions, dtype=np.float32)
 
 # ── Scale ────────────────────────────────────────────────────────────────────
 
