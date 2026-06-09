@@ -35,6 +35,7 @@ router.post(
   "/generate-model-stream",
   auth(),
   validateRequest(AIModelValidator.aiModel),
+  checkRequestLimit(),
   AiModelController.aiModelGenerateStream
 );
 
@@ -121,8 +122,10 @@ router.post(
 // ========== AI CHAT ==========
 
 // AI Chat - PROTECTED
+
 router.post(
   "/chat",
+  aiGenerationRateLimiter,
   auth(),
   validateRequest(AIModelValidator.aiChat),
   checkRequestLimit(),

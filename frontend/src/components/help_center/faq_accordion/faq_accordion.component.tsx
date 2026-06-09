@@ -36,16 +36,16 @@ const FAQAccordion: FC<FAQAccordionProps> = ({ items }) => {
         </div>
         <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">Common Questions</h2>
         <p className="text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
-          Find quick answers to the most common StorySparkAI questions, workflows, and troubleshooting topics.
+          Find quick answers to the most common StorySparkAI questions,
+          workflows, and troubleshooting topics.
         </p>
       </div>
 
       <div className="space-y-5">
         {items.map((faq, index) => {
           const isOpen = openIndex === index;
-          const baseId = "faq";
-          const buttonId = `${baseId}-faq-button-${faq.id}`;
-          const panelId = `${baseId}-faq-panel-${faq.id}`;
+          const buttonId = `faq-button-${faq.id}`;
+          const panelId = `faq-panel-${faq.id}`;
 
           return (
             <motion.article
@@ -54,21 +54,27 @@ const FAQAccordion: FC<FAQAccordionProps> = ({ items }) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.3) }}
-              className="group overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827]/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300 w-full"
+              className="group overflow-hidden rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827]/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300 w-full box-border"
             >
+              <div
+                className={`h-[2px] w-full bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500 transition-opacity duration-300 ${
+                  isOpen ? "opacity-100" : "opacity-0"
+                }`}
+              />
+
               <button
                 id={buttonId}
                 type="button"
+                onClick={() => toggleAccordion(index)}
                 aria-expanded={isOpen}
                 aria-controls={panelId}
-                onClick={() => toggleAccordion(index)}
-                className="w-full flex items-center justify-between px-6 py-5 text-left transition-all duration-300 hover:bg-slate-50 dark:hover:bg-white/[0.02] cursor-pointer focus:outline-none"
+                className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left transition-all duration-200 hover:bg-slate-50 dark:hover:bg-white/[0.02] focus:outline-none"
               >
                 <span className="text-sm sm:text-base text-slate-900 dark:text-slate-200 font-bold pr-4 tracking-tight leading-snug">
                   {faq.question}
                 </span>
                 <span
-                  className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-all duration-300 ${
+                  className={`flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-transform duration-300 ${
                     isOpen ? "rotate-180 bg-blue-500/10 text-blue-600 dark:text-blue-400" : ""
                   }`}
                   aria-hidden="true"
@@ -88,11 +94,13 @@ const FAQAccordion: FC<FAQAccordionProps> = ({ items }) => {
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="overflow-hidden px-6 pb-6"
+                    className="overflow-hidden"
                   >
                     <div className="px-6 pb-6">
-                      <div className="rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-white/5 p-4 mt-2">
-                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{faq.answer}</p>
+                      <div className="rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-white/5 p-5">
+                        <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm">
+                          {faq.answer}
+                        </p>
                       </div>
                     </div>
                   </motion.div>

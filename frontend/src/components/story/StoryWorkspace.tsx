@@ -181,6 +181,7 @@ const StoryWorkspace = () => {
           <>
             <StoryViewer
               chapters={currentStory.chapters}
+              storyId={currentStory.id}
             />
 
             <div className="p-6 border-t border-zinc-800">
