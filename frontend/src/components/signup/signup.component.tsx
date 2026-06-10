@@ -227,9 +227,76 @@ const SignUpComponent = () => {
     }
   };
 
+  const handleResendOtp = async () => {
+    if (cooldown > 0 || isBusy) return;
+    if (!registerInfo) {
+      toast.error("Something went wrong. Please restart the process.");
+      return;
+    }
+    setIsBusy(true);
+    try {
+      const res = await emailVerify({
+        name: registerInfo.name,
+        email: registerInfo.email,
+      }).unwrap();
+      if (res?.data) {
+        const { expiresAt } = res.data;
+        setExpiredAt(new Date(expiresAt).getTime());
+        toast.success("OTP resent successfully!");
+        setValue("otp", "");
+        setCooldown(60);
+      }
+    } catch (error: unknown) {
+      const e = error as { data?: Array<{ message?: string }>; message?: string };
+      const message =
+        e?.data?.[0]?.message ||
+        e?.message ||
+        "Failed to resend OTP. Please try again.";
+      toast.error(message);
+      console.log("resend error: ", error);
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleGoogleLoginSuccess = async (
+    credentialResponse: CredentialResponse
+  ) => {
+    setIsBusy(true);
+    try {
+      const res = await googleLogin({
+        token: credentialResponse.credential,
+      }).unwrap();
+      if (res.data.accessToken) {
+        toast.success("User logged in successfully with Google!");
+        storeUserInfo({
+          accessToken: res.data.accessToken,
+        });
+        navigate("/");
+      }
+    } catch {
+      toast.error("Failed to login with Google. Please try again.");
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const handleGoogleLoginError = () => {
     toast.error("Google login failed. Please try again.");
   };
+
+  const handleGoBack = () => {
+    setShowOtpField(false);
+  };
+
+  useEffect(() => {
+    if (!showOtpField && registerInfo) {
+      setValue("name", registerInfo.name);
+      setValue("email", registerInfo.email);
+      setValue("password", registerInfo.password);
+      setValue("confirmPassword", registerInfo.password);
+    }
+  }, [showOtpField, registerInfo, setValue]);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 py-8 sm:py-12 relative overflow-x-hidden text-slate-900 dark:text-slate-100 box-border">
@@ -248,6 +315,20 @@ const SignUpComponent = () => {
           <h3 className="text-center text-xl sm:text-2xl font-bold tracking-tight text-slate-200">
             {showOtpField ? "Verify Your Email" : "Create Account"}
           </h3>
+          {showOtpField && registerInfo && (
+            <p className="mt-2 mb-4 text-center text-xs sm:text-sm text-slate-400 px-1">
+              We sent a 6-digit code to{" "}
+              <span className="font-semibold text-blue-400">{registerInfo.email}</span>.
+              {" "}Not the right address?{" "}
+              <button
+                type="button"
+                onClick={handleGoBack}
+                className="font-semibold text-blue-400 hover:text-blue-300 underline transition-colors cursor-pointer"
+              >
+                Change email
+              </button>
+            </p>
+          )}
           {!showOtpField && (
             <p className="mt-2 mb-6 text-center text-xs sm:text-sm text-slate-400 px-1">
               Join StorySparkAI and begin your creative journey.
@@ -411,7 +492,7 @@ const SignUpComponent = () => {
                 />
               </div>
 
-              <div className="text-center pt-1 select-none">
+              <div className="text-center pt-1 select-none flex flex-col items-center gap-3">
                 <button
                   type="button"
                   onClick={handleResendOtp}
@@ -419,6 +500,14 @@ const SignUpComponent = () => {
                   className="text-xs font-bold uppercase tracking-wider text-blue-400 hover:text-blue-300 disabled:text-slate-600 transition-colors duration-150 focus:outline-none disabled:cursor-not-allowed cursor-pointer"
                 >
                   {cooldown > 0 ? `Resend OTP (${cooldown}s)` : "Resend OTP"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleGoBack}
+                  disabled={isBusy}
+                  className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-300 transition-colors duration-150 focus:outline-none cursor-pointer mt-1"
+                >
+                  Change Email
                 </button>
               </div>
             </div>

@@ -84,6 +84,10 @@ const EmailValidationComponent = () => {
     }
   };
 
+  const handleChangeEmail = () => {
+    navigate("/signup", { replace: true });
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center relative overflow-hidden px-4">
       {/* Ambient glows */}
@@ -103,9 +107,23 @@ const EmailValidationComponent = () => {
         <h2 className="text-3xl font-bold tracking-tight text-slate-200 mb-3 text-center">
           Verify your email
         </h2>
-        <p className="text-sm text-center text-slate-400 mb-8 leading-relaxed">
+        <p className="text-sm text-center text-slate-400 mb-2 leading-relaxed">
           Enter the verification code sent to <br/>
           <span className="font-semibold text-blue-400">{email || "your email"}</span>
+        </p>
+
+        {/* Change Email link */}
+        <p className="text-xs text-center text-slate-500 mb-6">
+          Wrong address?{" "}
+          <button
+            type="button"
+            onClick={handleChangeEmail}
+            disabled={isBusy}
+            className="font-semibold text-blue-400 hover:text-blue-300 underline transition-colors cursor-pointer disabled:cursor-not-allowed"
+            aria-label="Go back to sign up to change your email"
+          >
+            Change email
+          </button>
         </p>
         
         <form
