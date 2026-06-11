@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {
+import type {
   UseFormRegister,
   FieldValues,
   Path,
@@ -35,95 +35,56 @@ const SSInput = <T extends FieldValues>({
   autoFocus,
 }: SSInputProps<T>) => {
   const [showLocalPassword, setShowLocalPassword] = useState(false);
-
-
-
-
-
-
-  const inputType = type === "password" ? (showPassword ? "text" : "password") : type;
+  const isPasswordField = type === "password";
+  const inputType = isPasswordField && showLocalPassword ? "text" : type;
 
   return (
     <div className="w-full min-w-0 box-border">
-      <label htmlFor={name} className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-
+      <label
+        htmlFor={name}
+        className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+      >
         {label}
       </label>
+
       <div className="relative w-full box-border">
-        {/* Left Icon */}
         {icon && (
-
-          <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500 pointer-events-none">
-
-
-
-
-
-            <i className={icon}></i>
+          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
+            <i className={icon} />
           </span>
         )}
 
-
-
-
-
-        {/* The SINGLE Corrected Input Field with Bulletproof Padding and Inline Styles */}
         <input
           type={inputType}
           id={name}
-
           placeholder={placeholder}
           autoComplete={autoComplete}
           autoFocus={autoFocus}
+          required={required}
           {...register(name, validation)}
-
-          className={`w-full max-w-full h-11 block rounded-xl border bg-transparent text-sm transition-all duration-200 focus:outline-none focus:ring-2 ${
-            icon ? "pl-10" : "px-4"
-          } ${type === "password" ? "pr-10" : "pr-4"} ${
+          className={`block h-11 w-full max-w-full rounded-xl border bg-transparent text-sm transition-all duration-200 focus:outline-none focus:ring-2 ${
+            icon ? "pl-11" : "px-4"
+          } ${isPasswordField ? "pr-11" : "pr-4"} ${
             error
-              ? "border-rose-500 focus:ring-rose-500/20 focus:border-rose-500 text-rose-900 dark:text-rose-200"
-              : "border-slate-200 dark:border-slate-700 text-gray-900 dark:text-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
+              ? "border-rose-500 text-rose-900 focus:border-rose-500 focus:ring-rose-500/20 dark:text-rose-200"
+              : "border-slate-200 text-gray-900 focus:border-blue-500 focus:ring-blue-500/20 dark:border-slate-700 dark:text-gray-200"
           }`}
-          style={{ boxSizing: "border-box", width: "100%", maxWidth: "100%" }}
+          style={{ boxSizing: "border-box" }}
         />
 
-
-
-
-        {/* Right Password Eye Toggle */}
-
-        {type === "password" && (
-
+        {isPasswordField && (
           <button
             type="button"
-            onClick={() => setShowPassword(!showPassword)}
-
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none"
-            aria-label={showPassword ? "Hide password" : "Show password"}
-
-
-
+            onClick={() => setShowLocalPassword((prev) => !prev)}
+            className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 focus:outline-none hover:text-gray-700 dark:hover:text-gray-300"
+            aria-label={showLocalPassword ? "Hide password" : "Show password"}
           >
-            <i className={showLocalPassword ? "fi fi-rr-eye" : "fi fi-rr-eye-crossed"}></i>
+            <i className={showLocalPassword ? "fi fi-rr-eye" : "fi fi-rr-eye-crossed"} />
           </button>
         )}
-
-
       </div>
 
-      {/* Error Message */}
-      {error && (
-
-
-
-        <p className="text-red-500 text-sm mt-2">{error.message}</p>
-
-      )}
-
-
-
-
-
+      {error && <p className="mt-2 text-sm text-red-500">{error.message}</p>}
     </div>
   );
 };
