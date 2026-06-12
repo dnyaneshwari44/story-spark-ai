@@ -31,12 +31,13 @@
   },
   "packageManager": "pnpm@9.15.9",
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "tsx": "^4.22.4"
   },
   "dependencies": {
     "@flaticon/flaticon-uicons": "^3.3.1",
-    "framer-motion": "^12.40.0",
     "bcryptjs": "^3.0.3",
+    "framer-motion": "^12.40.0",
     "jspdf": "^4.2.1",
     "lucide-react": "^1.16.0",
     "socket.io": "^4.8.3"
