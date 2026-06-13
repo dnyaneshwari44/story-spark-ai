@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { FaXTwitter } from "react-icons/fa6";
+import type { IconType } from "react-icons";
 import logo from "../../assets/logoNew.png";
 
 const DEFAULT_GITHUB_ISSUES_URL = "https://github.com/ronisarkarexe/story-spark-ai/issues";
@@ -68,11 +70,15 @@ const FooterComponent = () => {
     { label: "Guidelines", to: "/guidelines" },
   ];
 
-  const socialLinks = [
-    { icon: "fa-instagram", url: "https://www.instagram.com/" },
-    { icon: "fa-linkedin", url: "https://www.linkedin.com/" },
-    { icon: "fa-twitter", url: "https://x.com/" },
-    { icon: "fa-facebook", url: "https://www.facebook.com/" },
+  type SocialLink =
+    | { type: "fa"; icon: string; label: string; url: string }
+    | { type: "icon"; Icon: IconType; label: string; url: string };
+
+  const socialLinks: SocialLink[] = [
+    { type: "fa", icon: "fa-instagram", label: "Instagram", url: "https://www.instagram.com/" },
+    { type: "fa", icon: "fa-linkedin", label: "LinkedIn", url: "https://www.linkedin.com/" },
+    { type: "icon", Icon: FaXTwitter, label: "X", url: "https://x.com/" },
+    { type: "fa", icon: "fa-facebook", label: "Facebook", url: "https://www.facebook.com/" },
   ];
 
   const currentYear = new Date().getFullYear();
@@ -185,17 +191,21 @@ const FooterComponent = () => {
 
             <ul className="flex flex-col gap-[12.5px]">
               {socialLinks.map((item) => (
-                <li key={item.icon}>
+                <li key={item.label}>
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group flex items-center gap-2.5 text-[14px] text-slate-300/85 hover:text-blue-300 transition-all duration-200"
                   >
-                    <i
-                      className={`fa-brands ${item.icon} text-[15px] text-slate-400 group-hover:text-blue-300 transition-colors`}
-                    />
-                    <span className="capitalize">{item.icon.replace("fa-", "")}</span>
+                    {item.type === "fa" ? (
+                      <i
+                        className={`fa-brands ${item.icon} text-[15px] text-slate-400 group-hover:text-blue-300 transition-colors`}
+                      />
+                    ) : (
+                      <item.Icon className="text-[15px] text-slate-400 group-hover:text-blue-300 transition-colors" />
+                    )}
+                    <span>{item.label}</span>
                   </a>
                 </li>
               ))}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
+import { FaXTwitter } from "react-icons/fa6";
 import { getShortenedText, ITopicData, topicsData, getWordCount, SELECTED_TOPIC_CLASSES } from "./stories.utils";
 import toast, { Toaster } from "react-hot-toast";
 import { useCreatePostMutation, useDeletePostMutation } from "../../redux/apis/post.api";
@@ -139,8 +140,15 @@ const RelatedStoriesComponent: React.FC<IRelatedStoriesComponentProps> = ({
                 >
             ⬇️ Export Markdown
                 </button>
-                <button type="button" className="rounded-lg px-4 py-2 bg-pink-600 text-slate-200 font-semibold cursor-pointer hover:bg-pink-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => handleShareStory("twitter")} disabled={!selectedStory}>
-                  🐦 Share
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-lg px-4 py-2 bg-pink-600 text-slate-200 font-semibold cursor-pointer hover:bg-pink-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => handleShareStory("twitter")}
+                  disabled={!selectedStory}
+                  aria-label="Share on X"
+                >
+                  <FaXTwitter className="text-sm" />
+                  Share
                 </button>
                 <button type="button" className="rounded-lg px-4 py-2 bg-violet-700 text-slate-200 font-semibold cursor-pointer hover:bg-violet-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => setShowWorldMap(true)} disabled={!selectedStory}>
                   🗺️ World Map

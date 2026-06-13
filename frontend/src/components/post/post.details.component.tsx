@@ -183,7 +183,7 @@ const PostDetailsComponent = () => {
   const handleTwitterShare = () => {
     const currentUrl = window.location.href;
     const currentTitle = post?.title || "Check out this story!";
-    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+    const url = `https://x.com/intent/tweet?url=${encodeURIComponent(
       currentUrl
     )}&text=${encodeURIComponent(currentTitle)}`;
     window.open(url, "_blank", "noopener,noreferrer");
