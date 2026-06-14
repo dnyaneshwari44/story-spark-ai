@@ -1145,10 +1145,7 @@ html.dark .contact-input::placeholder { color: rgba(148, 163, 184, 0.78); }
   .magic-cursor-sparkle,
   .contact-col-left,
   .contact-col-right,
-  .contact-badge,
-  .completed-badge,
-  .completed-badge:hover,
-  .completed-badge:focus-visible {
+  .contact-badge {
     transform: none !important;
     box-shadow: none !important;
     animation: none !important;
@@ -1157,8 +1154,7 @@ html.dark .contact-input::placeholder { color: rgba(148, 163, 184, 0.78); }
   .magic-cursor-sparkle,
   .magic-cursor-dot,
   .magic-cursor-glow,
-  .contact-form-glow-ring,
-  .completed-badge::before {
+  .contact-form-glow-ring {
     display: none !important;
   }
 
@@ -1358,74 +1354,4 @@ html.dark .contact-input::placeholder { color: rgba(148, 163, 184, 0.78); }
   cursor: not-allowed;
   transform: none;
 }
-
-/* ==========================================================================
-   Gamified Completed Achievement Badge Styles & Micro-interactions
-   ========================================================================== */
-.completed-badge {
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15), 
-              box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15), 
-              border-color 0.3s ease, 
-              background-color 0.3s ease !important;
-}
-
-.completed-badge:hover,
-.completed-badge:focus-visible {
-  transform: translateY(-5px) scale(1.035) !important;
-  border-color: rgba(234, 179, 8, 0.3) !important;
-  box-shadow: 
-    0 15px 30px -5px rgba(234, 179, 8, 0.12),
-    0 0 25px -5px rgba(245, 158, 11, 0.15),
-    inset 0 1px 2px rgba(255, 255, 255, 0.5) !important;
-  outline: none;
-}
-
-html.dark .completed-badge:hover,
-html.dark .completed-badge:focus-visible {
-  border-color: rgba(234, 179, 8, 0.4) !important;
-  box-shadow: 
-    0 20px 35px -8px rgba(234, 179, 8, 0.22),
-    0 0 30px -4px rgba(245, 158, 11, 0.2),
-    inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Elegant sheen hover effect */
-.completed-badge::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2) 20%,
-    rgba(255, 255, 255, 0.4) 60%,
-    transparent
-  );
-  transform: skewX(-25deg);
-  transition: none;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.completed-badge:hover::before,
-.completed-badge:focus-visible::before {
-  left: 150%;
-  transition: left 0.8s ease-in-out;
-}
-
-html.dark .completed-badge::before {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.05) 20%,
-    rgba(255, 255, 255, 0.15) 60%,
-    transparent
-  );
-}
-
 
