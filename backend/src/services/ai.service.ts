@@ -7,6 +7,19 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import Anthropic from "@anthropic-ai/sdk";
 
 let openai: OpenAI | null = null;
+let genAI: GoogleGenerativeAI | null = null;
+
+function getGeminiClient(): GoogleGenerativeAI {
+  if (!genAI) {
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) {
+      throw new Error("Gemini API key is required but was not provided. Please set GEMINI_API_KEY environment variable.");
+    }
+    genAI = new GoogleGenerativeAI(key);
+  }
+  return genAI;
+}
+
 let anthropic: Anthropic | null = null;
 const genAI  = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
