@@ -89,59 +89,82 @@ flowchart TD
 
 ## 🔄 Story Generation Request Flow
 
-This section illustrates the end-to-end lifecycle of a story generation request — from the moment a user submits a prompt to when they receive the generated story. Understanding this flow helps new contributors quickly navigate the codebase.
+The following diagram illustrates how a story generation request moves through the Story Spark AI system, from user input to AI-generated output. Understanding this workflow helps contributors identify where to make changes when working with authentication, AI integration, database operations, real-time notifications, and frontend story rendering.
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    actor User
-    participant Frontend as ⚛️ Frontend<br/>(React + Vite)
-    participant Backend as ⚙️ Backend<br/>(Express API)
-    participant Auth as 🔐 JWT Middleware
-    participant AI as 🤖 AI Service<br/>(OpenAI / Gemini)
-    participant DB as 🗄️ MongoDB<br/>(Mongoose)
-    participant Socket as 🔔 Socket.IO
+flowchart TD
 
-    User->>Frontend: Enters prompt & clicks "Generate Story"
-    Frontend->>Backend: POST /api/v1/stories (prompt, genre, options)
-    Backend->>Auth: Validate JWT access token
-    Auth-->>Backend: Token valid ✅ (or 401 Unauthorized ❌)
+    A[👤 User Enters Prompt] --> B[⚛️ Frontend<br/>Story Generator]
 
-    Backend->>AI: generateStory(securePrompt)
-    Note over AI: Tries OpenAI first,<br/>falls back to Gemini<br/>if unavailable
+    B --> C[⚙️ Backend API]
 
-    alt OpenAI available
-        AI-->>Backend: Story text (provider: "openai")
-    else OpenAI unavailable / rate-limited
-        AI->>AI: Fallback to Gemini
-        AI-->>Backend: Story text (provider: "gemini", fallbackUsed: true)
-    end
+    C --> D{🔐 JWT Valid?}
 
-    Backend->>DB: Save story (prompt, variations, author, cover)
-    DB-->>Backend: Saved story document (_id, timestamps)
+    D -->|No| E[❌ 401 Unauthorized]
+    D -->|Yes| F[🤖 AI Provider]
 
-    Backend->>Socket: Emit "story:generated" to user room
-    Socket-->>Frontend: Real-time notification (optional)
+    F --> G[OpenAI]
+    F --> H[Gemini]
 
-    Backend-->>Frontend: 200 OK { data: { story, variations, ... } }
-    Frontend-->>User: Displays generated story with choices
+    G --> I[📖 Generated Story]
+    H --> I
+
+    I --> J[🗄️ Save Story in MongoDB]
+
+    J --> K[🔔 Socket.IO Notification]
+
+    J --> L[📨 API Response]
+
+    K --> M[⚛️ Frontend Update]
+    L --> M
+
+    M --> N[✅ User Receives Story]
 ```
 
-### Key Observations for Contributors
+### 🔁 Request Lifecycle
 
-| Step | What to look at |
-|---|---|
-| Prompt submitted | `frontend/src/redux/apis/story.api.ts` |
-| JWT validation | `backend/src/middleware/` |
-| Story generation | `backend/src/services/ai.service.ts` |
-| AI fallback logic | `isRetryableError()` in `ai.service.ts` |
-| Saving to DB | `backend/src/controllers/` → Mongoose models |
-| Real-time push | Socket.IO emit in `backend/src/` |
-| Frontend display | `frontend/src/components/stories/` |
+1. The user enters a prompt in the Story Generator page.
+2. The frontend sends the request to the backend API.
+3. The backend validates authentication and request data through JWT middleware.
+4. The request is forwarded to the configured AI provider (OpenAI or Gemini).
+5. The AI provider generates story content and returns the response.
+6. The backend processes and formats the generated content.
+7. Story data is stored in MongoDB through the appropriate controllers and models.
+8. Socket.IO may emit real-time updates to the frontend.
+9. The backend returns the final response through the REST API.
+10. The frontend displays the generated story and available variations to the user.
 
-> **Note:** The AI layer only generates content — it never writes directly to the database. All persistence is handled by the Express controllers via Mongoose.
+### ❓ Why Understanding This Flow Matters
 
----
+This workflow provides a high-level view of how different layers of the application interact and can help contributors quickly identify the relevant area of the codebase when working on:
+
+* Story generation features
+* Authentication and authorization
+* Database persistence
+* AI integrations
+* Real-time notifications
+* Frontend story rendering
+
+### 📁 Related Components
+
+| Responsibility                 | Location                                   |
+| ------------------------------ | ------------------------------------------ |
+| Frontend user interface        | `frontend/`                                |
+| Backend API routes             | `backend/src/routes/`                      |
+| Controllers and business logic | `backend/src/controllers/`                 |
+| Authentication middleware      | `backend/src/middleware/`                  |
+| Database models                | `backend/src/models/`                      |
+| AI integration layer           | `backend/src/`                             |
+| Real-time notifications        | Socket.IO implementation in `backend/src/` |
+
+### ⛔ Common Failure Scenarios
+
+* Invalid or expired JWT token → Authentication error returned.
+* Invalid request payload → Validation error returned.
+* AI provider unavailable → Story generation request may fail or use fallback logic if configured.
+* Database write failure → Story cannot be saved and an error response is returned.
+
+> **Note:** The AI layer is responsible only for content generation. All persistence operations are handled through the backend controllers and MongoDB models.
 
 ## 🧱 Layer-by-Layer Breakdown
 
