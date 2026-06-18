@@ -386,7 +386,7 @@ const ReviewForm = () => {
             </div>
 
             {/* Rating */}
-            <div>
+            <div className="pb-8">
               <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-300">
                 <span className="text-blue-400">⭐</span>
                 Rating
@@ -407,7 +407,7 @@ const ReviewForm = () => {
               )}
             </div>
 
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-center mt-8 pb-2 sm:pb-0">
               <button
                 type="button"
                 onClick={handleSubmit}
@@ -445,8 +445,10 @@ const ReviewForm = () => {
         </div>
       </div>
     </div>
-  </div>
+  
 </div>
+  );
+    </div>
   );
 };
 
