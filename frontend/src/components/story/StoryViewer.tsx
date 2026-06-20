@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Chapter } from "../../types/story.types";
 import ReadingTimeBadge from "../ReadingTimeBadge";
+import { AudioPlayer } from "../AudioPlayer"; // Sahi import path
 
 interface Props {
   chapters: Chapter[];
@@ -92,33 +93,34 @@ const StoryViewer: React.FC<Props> = ({
         </div>
 
         <div className="flex justify-between items-center mt-2">
-  <span className="text-sm text-zinc-400">
-    Reading Progress
-  </span>
+          <span className="text-sm text-zinc-400">
+            Reading Progress
+          </span>
 
-  <span className="text-sm font-medium text-indigo-400">
-    {progress}%
-  </span>
-</div>
+          <span className="text-sm font-medium text-indigo-400">
+            {progress}%
+          </span>
+        </div>
       </div>
       <div className="max-w-4xl mx-auto">
-      {chapters.map((chapter) => (
-        <div key={chapter.id} className="mb-16">
-          <h1 className="text-4xl font-extrabold tracking-tight text-white mb-6">
-            {chapter.title}
-          </h1>
-          <h1 className="text-4xl font-extrabold tracking-tight text-white mb-6">
-            {chapter.title}
-          </h1>
+        {chapters.map((chapter) => (
+          <div key={chapter.id} className="mb-16">
+            <h1 className="text-4xl font-extrabold tracking-tight text-white mb-6">
+              {chapter.title}
+            </h1>
 
-<ReadingTimeBadge text={chapter.content} />
+            {/* ReadingTimeBadge aur AudioPlayer ko yahan place kiya hai */}
+            <div className="flex items-center gap-4 mb-4">
+              <ReadingTimeBadge text={chapter.content} />
+              <AudioPlayer text={chapter.content} />
+            </div>
 
-          <p className="text-lg text-zinc-300 whitespace-pre-line leading-9">
-            {chapter.content}
-          </p>
-          <hr className="border-zinc-800 mt-10" />
-        </div>
-      ))}
+            <p className="text-lg text-zinc-300 whitespace-pre-line leading-9">
+              {chapter.content}
+            </p>
+            <hr className="border-zinc-800 mt-10" />
+          </div>
+        ))}
       </div>
     </div>
   );
