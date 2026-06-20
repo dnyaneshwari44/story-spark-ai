@@ -255,53 +255,59 @@ const SignUpComponent = () => {
           )}
 
           {!showOtpField ? (
-            <form className="space-y-5 w-full min-w-0 block box-border" onSubmit={handleSubmit(onSubmit)}>
+            <form className="flex flex-col w-full min-w-0 gap-5 box-border" onSubmit={handleSubmit(onSubmit)}>
+              
+              <div className="w-full block">
+                <SSInput
+                  label="Name"
+                  name="name"
+                  placeholder="Enter your name"
+                  required={true}
+                  icon="fi fi-rr-user"
+                  register={register}
+                  autoComplete="name"
+                  validation={{
+                    required: "Name is required",
+                    minLength: { value: 2, message: "Name must be at least 2 characters" },
+                    pattern: {
+                      value: /^[A-Za-z0-9\s._]+$/,
+                      message: "Only letters, numbers, spaces, underscores, and dots are allowed",
+                    },
+                  }}
+                  error={errors.name}
+                />
+              </div>
 
-              <SSInput
-                label="Name"
-                name="name"
-                placeholder="Enter your name"
-                required={true}
-                icon="fi fi-rr-user"
-                register={register}
-                autoComplete="name"
-                validation={{
-                  required: "Name is required",
-                  minLength: { value: 2, message: "Name must be at least 2 characters" },
-                  pattern: {
-                    value: /^[A-Za-z0-9\s._]+$/,
-                    message: "Only letters, numbers, spaces, underscores, and dots are allowed",
-                  },
-                }}
-                error={errors.name}
-              />
+              <div className="w-full block">
+                <SSInput
+                  label="Email address"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  required={true}
+                  icon="fi fi-rr-envelope"
+                  register={register}
+                  autoComplete="email"
+                  error={errors.email}
+                />
+              </div>
 
-              <SSInput
-                label="Email address"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                required={true}
-                icon="fi fi-rr-envelope"
-                register={register}
-                autoComplete="email"
-                error={errors.email}
-              />
-
-              <SSInput
-                label="Password"
-                name="password"
-                type="password"
-                placeholder="Enter your password"
-                required={true}
-                icon="fi fi-rr-lock"
-                register={register}
-                autoComplete="new-password"
-                error={errors.password}
-              />
+              <div className="w-full block">
+                <SSInput
+                  label="Password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  required={true}
+                  icon="fi fi-rr-lock"
+                  register={register}
+                  autoComplete="new-password"
+                  error={errors.password}
+                />
+              </div>
 
               {password?.length > 0 && (
-                <div className="space-y-3 -mt-1 w-full min-w-0 overflow-hidden box-border">
+                <div className="space-y-3 w-full min-w-0 overflow-hidden box-border">
                   <div
                     className="w-full h-1.5 bg-slate-200 dark:bg-slate-700/50 rounded-full overflow-hidden"
                     role="progressbar"
@@ -321,32 +327,34 @@ const SignUpComponent = () => {
                         <li key={key} className={`flex items-center gap-2 ${met ? "text-emerald-400" : "text-slate-500"}`}>
                           <i className={`fa-solid ${met ? "fa-circle-check" : "fa-circle-xmark"} text-xs shrink-0`} aria-hidden="true" />
                           <span>{label}</span>
-                        </li>
+                        </td>
                       );
                     })}
                   </ul>
                 </div>
               )}
 
-              <SSInput
-                label="Confirm Password"
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                required={!showOtpField}
-                icon="fi fi-rr-lock"
-                register={register}
-                autoComplete="new-password"
-                validation={{
-                  validate: (value) => {
-                    if (showOtpField) return true;
-                    if (!value) return "Confirm password is required";
-                    if (value !== password) return "Passwords do not match!";
-                    return true;
-                  },
-                }}
-                error={errors.confirmPassword}
-              />
+              <div className="w-full block">
+                <SSInput
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  required={!showOtpField}
+                  icon="fi fi-rr-lock"
+                  register={register}
+                  autoComplete="new-password"
+                  validation={{
+                    validate: (value) => {
+                      if (showOtpField) return true;
+                      if (!value) return "Confirm password is required";
+                      if (value !== password) return "Passwords do not match!";
+                      return true;
+                    },
+                  }}
+                  error={errors.confirmPassword}
+                />
+              </div>
 
               <div className="pt-2 w-full box-border">
                 <SSButton text="Sign Up" type="submit" isLoading={isBusy} />
@@ -420,4 +428,3 @@ const SignUpComponent = () => {
 };
 
 export default SignUpComponent;
-
